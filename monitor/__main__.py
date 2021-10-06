@@ -62,17 +62,19 @@ def main(args: argparse.Namespace):
         ctx.commit()
 
         previous = time.time()
-        initial_rec = MonitorRecord(previous)
+        previous_rec = MonitorRecord(previous)
         while True:
             now = time.time()
             # lock the loop to the system clock
             # https://stackoverflow.com/a/25251804
             time.sleep(args.timestep - (now - previous) % args.timestep)
 
-            rec = MonitorRecord(time.time(), initial_rec)
+            rec = MonitorRecord(time.time(), previous_rec)
             rec.write(ctx)
+            previous_rec = rec
 
             prune(ctx, args.pruning_threshold)
+
             ctx.commit()
 
 
