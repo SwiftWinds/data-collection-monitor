@@ -28,16 +28,22 @@ class MonitorRecord:
         # Whether this record is writable to the database.
         self._writable = True
         # How many packets have been received so far in this session.
-        self._total_packets_received_so_far = get_total_packets_received_this_session()
+        self._total_packets_received_so_far = \
+            get_total_packets_received_this_session()
         if previous:
-            # The number of packets received since the last time step.
+            # The number of packets received in the last timestep. Does NOT
+            # correlate to the number of packets received since the previous
+            # timestamp in the database.
             self.packets_received = self._total_packets_received_so_far - \
                 previous._total_packets_received_so_far
-            # The rate at which packets have been received, in packets per second.
+            # The rate at which packets have been received, in packets per
+            # second.
             self.packet_receipt_rate = \
                 self.packets_received / (self.timestamp - previous.timestamp)
-            # The number of packets lost since the last time step.
-            self.kernel_packets_dropped = -1  # TODO: find kernel packets lost
+            # The number of packets lost in the last timestep. Does NOT
+            # correlate to the number of kernel packets lost since the previous
+            # timestamp in the database.
+            self.kernel_packets_dropped = None  # TODO: find kernel packets lost
         else:
             self._writable = False
 

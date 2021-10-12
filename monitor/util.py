@@ -1,6 +1,7 @@
 
 import unittest
 
+
 def throttle(f, n):
     """
     Throttle a function ``f`` such that it is only executed every ``n`` calls.
@@ -8,6 +9,7 @@ def throttle(f, n):
     the returned function will be always execute.
     """
     i = n
+
     def throttled(*args, **kwargs):
         nonlocal i
         i += 1
@@ -17,9 +19,10 @@ def throttle(f, n):
 
     return throttled
 
+
 class TestUtils(unittest.TestCase):
     def test_throttle(self):
-        f = lambda x: 2 * x
+        def f(x): return 2 * x
         throttled = throttle(f, 4)
 
         for _ in range(30):

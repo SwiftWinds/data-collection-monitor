@@ -14,11 +14,13 @@ from . import DEFAULT_PRUNING_FREQUENCY, DEFAULT_PRUNING_THRESHOLD, \
 from .record import MonitorRecord
 from .util import throttle
 
+
 def create_table(ctx):
     """
     Create the table for the monitoring records, if it does not already exist.
     """
-    ctx.execute(f'''
+    ctx.execute(
+        f'''
         CREATE TABLE IF NOT EXISTS {RECORD_TABLE} (
             -- The timestamp corresponding to this record, in UTC time.
             timestamp TEXT,
@@ -29,26 +31,32 @@ def create_table(ctx):
             -- The percentage of disk used.
             disk_used REAL,
 
-            -- The number of packets received since the last timestep.
+            -- The number of packets received since the last timestep. Does NOT
+            -- correlate to the number of packets received since the previous
+            -- timestamp in the table.
             packets_received INTEGER,
-            -- The rate at which packets have been received, in packets per second.
+            -- The rate at which packets have been received, in packets per
+            -- second.
             packet_receipt_rate REAL,
-            -- The number of kernel packets dropped since the last timestep.
+            -- The number of kernel packets dropped in the last timestep.
+            -- Does NOT correspond to the number of kernel packets dropped
+            -- since the previous timestamp in the table.
             kernel_packets_dropped INTEGER,
 
             PRIMARY KEY (timestamp)
-        );''')
+        );'''
+    )
+
 
 def prune_old_records(ctx, max_age):
     """Prunes old records from the database."""
-    ctx.execute(f'''
+    ctx.execute(
+        f'''
         DELETE FROM {RECORD_TABLE} WHERE
             strftime('%s', 'now') - timestamp > ?
-        ;''', (
-            max_age,
-        ),
+        ;''',
+        (max_age,)
     )
-
 
 
 def main(args: argparse.Namespace):
@@ -102,12 +110,14 @@ if __name__ == '__main__':
         '--pruning-frequency',
         type=int,
         default=DEFAULT_PRUNING_FREQUENCY,
-        help='How often to prune outdated records from the table, in multiples of the timestep.',
+        help='How often to prune outdated records from the table, in '
+             'multiples of the timestep.',
     )
     parser.add_argument(
         '--pruning-threshold',
         type=int,
         default=DEFAULT_PRUNING_THRESHOLD,
-        help='Minimum age for records to be kept while pruning old records, in seconds.',
+        help='Minimum age for records to be kept while pruning old records, '
+             'in seconds.',
     )
     main(parser.parse_args())
