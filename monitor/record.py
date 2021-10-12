@@ -1,6 +1,7 @@
 
 from . import RECORD_TABLE
-from .metrics import get_cpu_usage, get_mem_usage, get_total_packets_received_this_session
+from .metrics import get_cpu_usage, get_disk_usage, get_mem_usage, \
+    get_total_packets_received_this_session
 
 
 class MonitorRecord:
@@ -21,6 +22,8 @@ class MonitorRecord:
         self.cpu_used = get_cpu_usage()
         # The percentage of memory used.
         self.mem_used = get_mem_usage()
+        # The percentage of disk used.
+        self.disk_used = get_disk_usage()
 
         # Whether this record is writable to the database.
         self._writable = True
@@ -42,11 +45,13 @@ class MonitorRecord:
         """Write this record to the passed database context."""
         if self._writable:
             ctx.execute(
-                f'INSERT INTO {RECORD_TABLE} VALUES (?, ?, ?, ?, ?, ?);',
+                f'INSERT INTO {RECORD_TABLE} VALUES (?, ?, ?, ?, ?, ?, ?);',
                 (
                     self.timestamp,
                     self.cpu_used,
                     self.mem_used,
+                    self.disk_used,
+
                     self.packets_received,
                     self.packet_receipt_rate,
                     self.kernel_packets_dropped,

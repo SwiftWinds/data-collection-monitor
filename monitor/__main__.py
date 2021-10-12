@@ -26,6 +26,8 @@ def create_table(ctx):
             cpu_used REAL,
             -- The percentage of memory used.
             mem_used REAL,
+            -- The percentage of disk used.
+            disk_used REAL,
 
             -- The number of packets received since the last timestep.
             packets_received INTEGER,
