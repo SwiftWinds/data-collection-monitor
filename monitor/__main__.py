@@ -7,6 +7,7 @@ Dependencies:
 import argparse
 import pathlib
 import sqlite3
+import sys
 import time
 
 from . import DEFAULT_PRUNING_FREQUENCY, DEFAULT_PRUNING_THRESHOLD, \
@@ -38,10 +39,10 @@ def create_table(ctx):
             -- The rate at which packets have been received, in packets per
             -- second.
             packet_receipt_rate REAL,
-            -- The number of kernel packets dropped in the last timestep.
-            -- Does NOT correspond to the number of kernel packets dropped
+            -- The number of interface packets dropped in the last timestep.
+            -- Does NOT correspond to the number of interface packets dropped
             -- since the previous timestamp in the table.
-            kernel_packets_dropped INTEGER,
+            packets_dropped INTEGER,
 
             PRIMARY KEY (timestamp)
         );'''
@@ -59,7 +60,8 @@ def prune_old_records(ctx, max_age):
     )
 
 
-def main(args: argparse.Namespace):
+def main():
+    args = collect_args()
     ctx = sqlite3.connect(args.db)
 
     pruning_frequency = 0 if not args.prune else args.pruning_frequency
@@ -87,8 +89,10 @@ def main(args: argparse.Namespace):
 
             ctx.commit()
 
+    return 0
 
-if __name__ == '__main__':
+def collect_args() -> argparse.Namespace:
+    """Define arguments and return passed values from the command-line."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'db',
@@ -120,4 +124,8 @@ if __name__ == '__main__':
         help='Minimum age for records to be kept while pruning old records, '
              'in seconds.',
     )
-    main(parser.parse_args())
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    sys.exit(main())
