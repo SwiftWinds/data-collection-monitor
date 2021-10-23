@@ -3,9 +3,9 @@
 from datetime import datetime
 from socket import *
 
-# For this example, we'll use PORT = 12000
+
 PORT = 12000
-SERVER = "127.0.0.1"   # means "local host"  only for testing
+SERVER = "0.0.0.0" # for local network
 FORMAT = 'utf-8'
 SIZE = 2048
 
@@ -16,21 +16,17 @@ s = socket(AF_INET, SOCK_DGRAM)
 s.bind((SERVER, PORT))
 
 connected = True
-
+connected_device = 0
 while connected:
     message, clientAddress = s.recvfrom(SIZE)
     if message:
         decoded_mess = message.decode(FORMAT)
 
-    if (decoded_mess == "Disconnect"):
-            print("Got a disconnect request. Bye.")
-            connected = False
-            break
-        #check connection
-        # if(decoded_mess == "Hello"):
-        #     responseMessage = "Hiya"
-        #     s.sendto(responseMessage.encode(FORMAT), clientAddress)
-        #     print("Received this message:", modMessage)
+    if decoded_mess == "connected":
+        connected_device = connected_device + 1
+        print("A new device started sending information")
+        continue
+        
 
     data_list = [float(x) for x in decoded_mess.split()]
     # split the data into arrays for ez access
