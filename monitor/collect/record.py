@@ -1,10 +1,11 @@
 
-from . import RECORD_TABLE
-from .metrics import get_cpu_usage, get_disk_usage, get_mem_usage, \
+from monitor.collect.const import RECORD_TABLE
+from monitor.collect.metrics import get_cpu_usage, get_disk_usage, \
+    get_mem_usage, get_total_interface_packets_dropped_this_session, \
     get_total_packets_received_this_session
 
 
-class MonitorRecord:
+class Record:
     """A record of monitoring data."""
 
     def __init__(self, timestamp, previous=None):
@@ -30,20 +31,24 @@ class MonitorRecord:
         # How many packets have been received so far in this session.
         self._total_packets_received_so_far = \
             get_total_packets_received_this_session()
+        # How many incoming interface packets have been dropped so far in this session.
+        self._total_packets_dropped_so_far = \
+            get_total_interface_packets_dropped_this_session()
         if previous:
             # The number of packets received in the last timestep. Does NOT
             # correlate to the number of packets received since the previous
-            # timestamp in the database.
+            # timestamp in the table.
             self.packets_received = self._total_packets_received_so_far - \
                 previous._total_packets_received_so_far
             # The rate at which packets have been received, in packets per
             # second.
             self.packet_receipt_rate = \
                 self.packets_received / (self.timestamp - previous.timestamp)
-            # The number of packets lost in the last timestep. Does NOT
-            # correlate to the number of kernel packets lost since the previous
-            # timestamp in the database.
-            self.kernel_packets_dropped = None  # TODO: find kernel packets lost
+            # The number of interface packets dropped in the last timestep.
+            # Does NOT correlate to the number of interface packets dropped
+            # since the previous timestamp in the table.
+            self.packets_dropped = self._total_packets_dropped_so_far - \
+                previous._total_packets_dropped_so_far
         else:
             self._writable = False
 
@@ -60,6 +65,6 @@ class MonitorRecord:
 
                     self.packets_received,
                     self.packet_receipt_rate,
-                    self.kernel_packets_dropped,
+                    self.packets_dropped,
                 ),
             )

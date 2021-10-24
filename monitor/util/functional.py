@@ -20,7 +20,7 @@ def throttle(f, n):
     return throttled
 
 
-class TestUtils(unittest.TestCase):
+class TestFunctional(unittest.TestCase):
     def test_throttle(self):
         def f(x): return 2 * x
         throttled = throttle(f, 4)

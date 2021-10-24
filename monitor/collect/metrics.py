@@ -1,7 +1,7 @@
 
 import psutil
 
-from . import DU_PATH
+from monitor.collect.const import DU_PATH
 
 
 def get_cpu_usage():
@@ -22,3 +22,10 @@ def get_mem_usage():
 def get_total_packets_received_this_session():
     """Get the total number of packets received in this session."""
     return psutil.net_io_counters().packets_recv
+
+
+def get_total_interface_packets_dropped_this_session():
+    """
+    Get the total number of incoming interface packets dropped in this session.
+    """
+    return psutil.net_io_counters().dropin
