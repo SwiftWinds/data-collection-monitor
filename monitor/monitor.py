@@ -10,7 +10,7 @@ FORMAT = 'utf-8'
 SIZE = 2048
 
 #initalize socket
-s = socket(AF_INET, SOCK_DGRAM) 
+s = socket(AF_INET, SOCK_DGRAM)
 
 #bind socket to port and connect
 s.bind((SERVER, PORT))
@@ -26,7 +26,7 @@ while connected:
         connected_device = connected_device + 1
         print("A new device started sending information")
         continue
-        
+
 
     data_list = [float(x) for x in decoded_mess.split()]
     # split the data into arrays for ez access
@@ -39,4 +39,3 @@ while connected:
 
     print("time: "+ str(datetime.fromtimestamp(timestamp)))
     print("other data: ", cpu_used, mem_used, disk_used, total_packets_received_so_far, server_num)
-    

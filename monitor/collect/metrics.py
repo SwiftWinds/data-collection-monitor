@@ -1,7 +1,7 @@
 
 import psutil
 
-from monitor.collect.const import DU_PATH
+from monitor.const import DU_PATH
 
 
 def get_cpu_usage():

@@ -9,10 +9,11 @@ import sys
 import typing
 
 import monitor.collect as collect
+import monitor.listen as listen
 from monitor.util.subcommand import Subcommand
 
 # List of available subcommands' constructors.
-SUBCOMMAND_CONSTRUCTORS = [collect.Collect]
+SUBCOMMAND_CONSTRUCTORS = [collect.Collect, listen.Listen]
 
 
 def main() -> int:
